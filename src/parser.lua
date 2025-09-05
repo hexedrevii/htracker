@@ -1,8 +1,8 @@
 ---@class parser
 ---@field options table
----@field __values table
----@field __flags boolean[]
----@field __required table
+---@field private __values table
+---@field private __flags boolean[]
+---@field private __required table
 local parser = {}
 parser.__index = parser
 
@@ -10,13 +10,8 @@ function parser:new()
   local p = {
     options = {},
 
-    ---@private
     __values = {},
-
-    ---@private
     __flags  = {},
-
-    ---@private
     __required = {}
   }
 
