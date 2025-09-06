@@ -86,4 +86,4 @@ I can't get it to work no matter how much I try :(
 ```
 
 # License
-MIT
+GPL 3.0
