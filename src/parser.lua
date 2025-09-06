@@ -19,26 +19,50 @@ function parser:new()
 end
 
 ---Add new option to the parser
----@param long string
----@param short string
----@param isFlag boolean
+---@param long string   Long name of the option
+---@param short string? Short name of the option
 ---@param isRequired boolean
-function parser:push(long, short, isFlag, isRequired)
+function parser:pushOption(long, short, isRequired)
   if isRequired then
     -- Set to false because they aren't provided yet!
     self.__required[long]  = false
-    self.__required[short] = false
+    if short ~= nil then
+      self.__required[short] = false
+    end
   end
 
-  self.options['--'..long] = { flag = isFlag, required = isRequired, long = long, short = short }
-  self.options['-'..short] = { flag = isFlag, required = isRequired, long = long, short = short }
+  self.options['--'..long] = { flag = false, required = isRequired, long = long, short = short }
+
+  if short ~= nil then
+    self.options['-'..short] = { flag = false, required = isRequired, long = long, short = short }
+  end
 end
 
----@param args string[]
+---Add new flag to the parser
+---@param long string   Long name of the option
+---@param short string? Short name of the option
+---@param isRequired boolean
+function parser:pushFlag(long, short, isRequired)
+  if isRequired then
+    -- Set to false because they aren't provided yet!
+    self.__required[long]  = false
+    if short ~= nil then
+      self.__required[short] = false
+    end
+  end
+
+  self.options['--'..long] = { flag = true, required = isRequired, long = long, short = short }
+
+  if short ~= nil then
+    self.options['-'..short] = { flag = true, required = isRequired, long = long, short = short }
+  end
+end
+
+---@param args string[] The commandline arguments, usually `arg`
 function parser:parse(args)
   local value = false
 
-  for i, arg in ipairs(args) do
+  for idx, arg in ipairs(args) do
     if value then
       value = false
       goto continue
@@ -51,7 +75,7 @@ function parser:parse(args)
     end
 
     if not opt.flag then
-      local val = args[i + 1]
+      local val = args[idx + 1]
       self.__values[opt.short] = val
       self.__values[opt.long]  = val
 
@@ -89,6 +113,7 @@ function parser:parse(args)
   end
 end
 
+---@param name string
 function parser:getValue(name)
   return self.__values[name]
 end
