@@ -1,0 +1,4 @@
+luafilesystem
+lua-cjson
+
+from luarocks
