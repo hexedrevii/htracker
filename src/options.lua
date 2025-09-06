@@ -17,7 +17,7 @@ function options.addDate(date)
 
   local dataFile = utils.getDataFile()
   if not dataFile then
-    print('Idek how this fucking happened lol')
+    print('ERROR: Running program on unsupported OS.')
     os.exit(1)
   end
 
@@ -29,11 +29,34 @@ end
 function options.deleteData()
   local dataFile = utils.getDataFile()
   if not dataFile then
-    print('Idek how this fucking happened lol')
+    print('ERROR: Running program on unsupported OS.')
     os.exit(1)
   end
 
   os.remove(dataFile)
+end
+
+---@param id string
+function options.listId(id)
+  local jsonDecoded = utils.getDataDecoded()
+  local found = false
+  for _, date in pairs(jsonDecoded.chargeData) do
+    if date.id == id then
+      print('Headphones put to charge on \27[38;5;10m' .. date.fmt .. '\27[0m!\n')
+      found = true
+    end
+  end
+
+  if not found then
+    print('No entry using that ID was found!')
+  end
+end
+
+function options.listAll()
+  local jsonDecoded = utils.getDataDecoded()
+  for _, date in pairs(jsonDecoded.chargeData) do
+    print('Headphones put to charge on \27[38;5;10m' .. date.fmt .. '\27[0m! \27[38;5;8m(' .. date.id .. ')\27[0m\n')
+  end
 end
 
 return options

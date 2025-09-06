@@ -7,6 +7,15 @@ local utils = {
   jsonParser = cjson.new()
 }
 
+-- From https://gist.github.com/jrus/3197011
+function utils.newGuid()
+  local template ='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+  return string.gsub(template, '[xy]', function (c)
+    local v = (c == 'x') and math.random(0, 15) or math.random(8, 11)
+    return string.format('%x', v)
+  end)
+end
+
 ---Get the name of the running OS.
 ---@return 'Windows'|'Linux'
 function utils.getOS()
@@ -57,7 +66,7 @@ end
 function utils.writeTo(path, data)
   local file, err = io.open(path, 'w')
   if not file then
-    io.write('ERORR: Unable to write to ')
+    io.write('ERROR: Unable to write to ')
     print(err)
 
     os.exit(1)
@@ -67,13 +76,13 @@ function utils.writeTo(path, data)
   file:close()
 end
 
----Write the date to the json file.
+---Write the date to a json file.
 ---@param path string
 ---@param date integer
 function utils.writeData(path, date)
   if not utils.exists(path) then
     local data = {
-      { timeStamp = date, fmt = os.date('%A %d, %B %Y', date) },
+      { timeStamp = date, fmt = os.date('%A %d, %B %Y', date), id = utils.newGuid()},
     }
 
     setmetatable(data, cjson.array_mt)
@@ -86,9 +95,26 @@ function utils.writeData(path, date)
     return
   end
 
+  local jsonDecoded = utils.getDataDecoded()
+  table.insert(
+    jsonDecoded.chargeData,
+    { timeStamp = date, fmt = os.date('%A %d, %B %Y', date), id = utils.newGuid() }
+  )
+
+  local jsonEncoded = cjson.encode(jsonDecoded)
+
+  utils.writeTo(path, jsonEncoded)
+end
+
+function utils.getDataDecoded()
+  local path = utils.getDataFile()
+  if not path then
+    os.exit(1)
+  end
+
   local file, err = io.open(path, 'rb')
   if not file then
-    io.write('ERORR: Unable to read from ')
+    io.write('ERROR: Unable to read from ')
     print(err)
 
     os.exit(1)
@@ -97,12 +123,7 @@ function utils.writeData(path, date)
   local content = file:read('*a')
   file:close()
 
-  local jsonDecoded = cjson.decode(content)
-  table.insert(jsonDecoded.chargeData, { timeStamp = date, fmt = os.date('%A %d, %B %Y', date) })
-
-  local jsonEncoded = cjson.encode(jsonDecoded)
-
-  utils.writeTo(path, jsonEncoded)
+  return cjson.decode(content)
 end
 
 ---Get the path of the data file.
