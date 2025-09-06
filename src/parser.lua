@@ -3,6 +3,7 @@
 ---@field private __values table
 ---@field private __flags boolean[]
 ---@field private __required table
+---@field private __empty function
 local parser = {}
 parser.__index = parser
 
@@ -12,10 +13,17 @@ function parser:new()
 
     __values = {},
     __flags  = {},
-    __required = {}
+    __required = {},
+    __empty = nil
   }
 
   return setmetatable(p, parser)
+end
+
+---Set the function to be called if no value or flag is provided.
+---@param callback function
+function parser:setNothingProvided(callback)
+  self.__empty = callback
 end
 
 ---Add new option to the parser
@@ -122,6 +130,21 @@ function parser:parse(args)
   if #missing > 0 then
     print("Missing required options: " .. table.concat(missing, ", "))
     os.exit(1)
+  end
+
+  -- If nothing was provided
+  -- Utility function
+  local function __isEmptyTable(t)
+    for _ in pairs(t) do
+      return false
+    end
+    return true
+  end
+
+  if __isEmptyTable(self.__values) and __isEmptyTable(self.__flags) then
+    if self.__empty then
+      self.__empty()
+    end
   end
 end
 
