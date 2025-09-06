@@ -60,7 +60,7 @@ lua main.lua --help
 If you want to turn the program into an executable, you can use luastatic.
 
 ```bash
-# Get luastatic (works the same on both Linux and Windows)
+# Get luastatic
 luarocks install luastatic
 ```
 
@@ -73,16 +73,15 @@ sudo apt install liblua5.4-dev gcc g++ make
 
 ## Fedora
 sudo dnf install lua-devel gcc g++ make
+```
 
-# Compiling
+And now, we can build the app.
+```bash
 ## Fedora
 luastatic main.lua src/options.lua src/parser.lua src/utils.lua /usr/lib64/lua/5.4/lfs.so /usr/lib64/lua/5.4/cjson.so /usr/lib64/liblua-5.4.so -I/usr/include -o htracker
 
 ## Ubuntu
 luastatic main.lua src/options.lua src/parser.lua src/utils.lua /usr/local/lib/lua/5.4/lfs.so /usr/local/lib/lua/5.4/cjson.so /usr/lib/x86_64-linux-gnu/liblua-5.4.so -I/usr/include/lua5.4 -o htracker
-
-# Windows
-I can't get it to work no matter how much I try :(
 ```
 
 # License
