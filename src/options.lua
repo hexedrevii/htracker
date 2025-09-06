@@ -36,13 +36,33 @@ function options.deleteData()
   os.remove(dataFile)
 end
 
+function options.remove(id)
+  local jsonDecoded = utils.getDataDecoded()
+  local found = false
+  for idx, date in ipairs(jsonDecoded.chargeData) do
+    if date.id == id then
+      table.remove(jsonDecoded.chargeData, idx)
+      found = true
+
+      break
+    end
+  end
+
+  if found then
+    utils.writeAll(jsonDecoded)
+    print('Successfully removed entry with ID ' .. id)
+  else
+    print('No entry by that ID exits!')
+  end
+end
+
 ---@param id string
 function options.listId(id)
   local jsonDecoded = utils.getDataDecoded()
   local found = false
   for _, date in pairs(jsonDecoded.chargeData) do
     if date.id == id then
-      print('Headphones put to charge on \27[38;5;10m' .. date.fmt .. '\27[0m!\n')
+      print('Headphones put to charge on \27[38;5;10m' .. date.fmt .. '\27[0m!')
       found = true
     end
   end
@@ -54,8 +74,11 @@ end
 
 function options.listAll()
   local jsonDecoded = utils.getDataDecoded()
-  for _, date in pairs(jsonDecoded.chargeData) do
-    print('Headphones put to charge on \27[38;5;10m' .. date.fmt .. '\27[0m! \27[38;5;8m(' .. date.id .. ')\27[0m\n')
+  for idx, date in ipairs(jsonDecoded.chargeData) do
+    print('Headphones put to charge on \27[38;5;10m' .. date.fmt .. '\27[0m! \27[38;5;8m(' .. date.id .. ')\27[0m')
+    if idx ~= #jsonDecoded.chargeData then
+      print()
+    end
   end
 end
 

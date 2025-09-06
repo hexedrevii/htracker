@@ -9,6 +9,7 @@ local parser = argParser:new()
 
 parser:pushOption('add', 'a', false)
 parser:pushOption('list-id', 'i', false)
+parser:pushOption('remove', 'r', false)
 
 parser:pushFlag('delete-all-data-im-super-sure', nil, false)
 parser:pushFlag('list', 'l', false)
@@ -26,6 +27,11 @@ end
 local lsId = parser:getValue('list-id')
 if lsId then
   options.listId(lsId)
+end
+
+local rmId = parser:getValue('remove')
+if rmId then
+  options.remove(rmId)
 end
 
 local date = parser:getValue('add')

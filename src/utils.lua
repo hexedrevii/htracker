@@ -106,6 +106,17 @@ function utils.writeData(path, date)
   utils.writeTo(path, jsonEncoded)
 end
 
+function utils.writeAll(data)
+  local path = utils.getDataFile()
+  if not path then
+    print('ERROR: Running on unsupported OS.')
+    os.exit(1)
+  end
+
+  local json = cjson.encode(data)
+  utils.writeTo(path, json)
+end
+
 function utils.getDataDecoded()
   local path = utils.getDataFile()
   if not path then
