@@ -7,6 +7,8 @@ local utils = {
   jsonParser = cjson.new()
 }
 
+---Get the name of the running OS.
+---@return 'Windows'|'Linux'
 function utils.getOS()
   local nullDevice = package.config:sub(1,1) == "\\" and "NUL" or "/dev/null"
 
@@ -49,6 +51,9 @@ function utils.mkdir(path)
   end
 end
 
+---Write to an arbitrary file.
+---@param path string
+---@param data string
 function utils.writeTo(path, data)
   local file, err = io.open(path, 'w')
   if not file then
@@ -62,6 +67,7 @@ function utils.writeTo(path, data)
   file:close()
 end
 
+---Write the date to the json file.
 ---@param path string
 ---@param date integer
 function utils.writeData(path, date)
@@ -99,9 +105,10 @@ function utils.writeData(path, date)
   utils.writeTo(path, jsonEncoded)
 end
 
----@param date integer
-function utils.getData(date)
-  local osname = utils.getOS()
+---Get the path of the data file.
+---@return string|nil
+function utils.getDataFile()
+    local osname = utils.getOS()
 
   if osname == 'Linux' then
     local home  = os.getenv('HOME')
@@ -111,15 +118,18 @@ function utils.getData(date)
     utils.mkdir(home .. '/.local/share')
     utils.mkdir(dataDir)
 
-    local dataFile = dataDir .. '/data.json'
-    utils.writeData(dataFile, date)
-
+    return dataDir .. '/data.json'
   elseif osname == 'Windows' then
-    local localAppData = os.getenv("LOCALAPPDATA")
-    local program = localAppData .. "\\Programs" .. "\\HeadphoneBattery"
+    local localAppData = os.getenv('LOCALAPPDATA')
+    local program = localAppData .. '\\Programs' .. '\\HeadphoneBattery'
 
-    -- TODO
+    utils.mkdir(localAppData .. '\\Programs')
+    utils.mkdir(program)
+
+    return program .. '\\data.json'
   end
+
+  return nil
 end
 
 return utils

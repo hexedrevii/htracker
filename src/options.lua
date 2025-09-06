@@ -15,8 +15,25 @@ function options.addDate(date)
     day   = d
   })
 
-  utils.getData(osDate)
+  local dataFile = utils.getDataFile()
+  if not dataFile then
+    print('Idek how this fucking happened lol')
+    os.exit(1)
+  end
+
+  utils.writeData(dataFile, osDate)
+
   print('Successfully added data to charge log.')
+end
+
+function options.deleteData()
+  local dataFile = utils.getDataFile()
+  if not dataFile then
+    print('Idek how this fucking happened lol')
+    os.exit(1)
+  end
+
+  os.remove(dataFile)
 end
 
 return options

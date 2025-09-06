@@ -76,11 +76,17 @@ function parser:parse(args)
 
     if not opt.flag then
       local val = args[idx + 1]
-      self.__values[opt.short] = val
+      if opt.short ~= nil then
+        self.__values[opt.short] = val
+      end
+
       self.__values[opt.long]  = val
 
       if opt.required then
-        self.__required[opt.short] = true
+        if opt.short ~= nil then
+          self.__required[opt.short] = true
+        end
+
         self.__required[opt.long]  = true
       end
 
@@ -88,11 +94,17 @@ function parser:parse(args)
       goto continue
     end
 
-    self.__flags[opt.short] = true
+    if opt.short ~= nil then
+      self.__flags[opt.short] = true
+    end
+
     self.__flags[opt.long]  = true
 
     if opt.required then
-      self.__required[opt.short] = true
+      if opt.short ~= nil then
+        self.__required[opt.short] = true
+      end
+
       self.__required[opt.long]  = true
     end
 
